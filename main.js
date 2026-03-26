@@ -5,6 +5,14 @@ document.getElementById("submit").addEventListener("click", function (event) {
 const query = document.getElementById("query")
 const output = document.getElementById("output")
 
+const debounce = (fn, delay) => {
+    let timeoutId
+    return (...args) => {
+        clearTimeout(timeoutId)
+        timeoutId = setTimeout(() => fn(...args), delay)
+    }
+}
+
 const getResult = async () => {    
     const response = await fetch(
         `https://kodepos.vercel.app/search?q=${query.value}`
@@ -71,7 +79,9 @@ const displayResult = async () => {
     output.innerHTML = items.join('')
 }
 
+const debouncedDisplayResult = debounce(() => displayResult(), 400)
+
 const handleSubmit = () => {
     output.innerHTML = "mohon tunggu..."
-    displayResult()
+    debouncedDisplayResult()
 }
