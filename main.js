@@ -18,17 +18,19 @@ const getMatched = (item) => {
     let res = []
 
     for (let name in item) {
-        if (item[name].toLowerCase().includes(query.value.toLowerCase())) 
+        if (item[name] !== null && String(item[name]).toLowerCase().includes(query.value.toLowerCase())) 
         {
             let category = {
                 'province': 'Provinsi',
-                'city': 'Kota',
-                'subdistrict': 'Kecamatan',
-                'urban': 'Kelurahan',
-                'postalcode': 'Kode Pos'
+                'regency': 'Kabupaten/Kota',
+                'district': 'Kecamatan',
+                'village': 'Desa/Kelurahan',
+                'code': 'Kode Pos'
             }
 
-            res = [category[name], item[name]]
+            if (category[name]) {
+                res = [category[name], item[name]]
+            }
         }
     }
 
@@ -44,25 +46,25 @@ const handleCopy = (text) => {
 const displayResult = async () => {
     let result = await getResult()
     
-    if (result.status === false) {
+    if (result.statusCode !== 200 || !result.data || result.data.length === 0) {
         output.innerHTML = "Maaf, tidak dapat ditemukan hasil pencarian"
         return
     }
 
     let items = result.data.map((item) => {
         let matched = getMatched(item)
-        return `<div onclick="handleCopy('${item.postalcode}')" class="item">
-                    <p>${matched[0]}</p>
-                    <h3>${matched[1]}</h3>
+        return `<div onclick="handleCopy('${item.code}')" class="item">
+                    <p>${matched ? matched[0] : ''}</p>
+                    <h3>${matched ? matched[1] : ''}</h3>
                     <p>Provinsi: ${item.province}
                         <br>
-                        Kota: ${item.city}
+                        Kota/Kab: ${item.regency}
                         <br>
-                        Kecamatan: ${item.subdistrict}
+                        Kecamatan: ${item.district}
                         <br>
-                        Kelurahan: ${item.urban}
+                        Kelurahan: ${item.village}
                     </p>
-                    <h3>${item.postalcode}</h3>
+                    <h3>${item.code}</h3>
                 </div>`
     })
 
