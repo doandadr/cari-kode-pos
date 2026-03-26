@@ -1,7 +1,3 @@
-document.getElementById("submit").addEventListener("click", function (event) {
-    event.preventDefault();
-});
-
 const query = document.getElementById("query")
 const output = document.getElementById("output")
 
@@ -85,3 +81,12 @@ const handleSubmit = () => {
     output.innerHTML = "mohon tunggu..."
     debouncedDisplayResult()
 }
+
+document.getElementById("submit").addEventListener("click", function (event) {
+    event.preventDefault();
+    handleSubmit()
+});
+
+query.addEventListener("input", () => {
+    handleSubmit()
+})
